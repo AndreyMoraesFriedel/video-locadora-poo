@@ -1,5 +1,8 @@
 package br.com.videolocadora.models;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public abstract class Usuario {
     private static int contadorId;
     private final int id;
@@ -18,7 +21,7 @@ public abstract class Usuario {
         this.permissao = permissao;
         this.telefone = telefone;
         this.email = email;
-        this.password = password;
+        this.password = gerarHash(password);
     }  
 
     public String getEmail() {
@@ -61,13 +64,29 @@ public abstract class Usuario {
         this.telefone = telefone;
     }
 
-    // private String gerarHash(String senha) {}
+    private String gerarHash(String senha) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(senha.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for(byte b : hash){
+                hexString.append(String.format("%02x", b));
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Erro ao gerar hash", e);
+        }
+    }
 
     // public boolean login(String emailDigitado, String senhaDigitada) {}
 
-    // public boolean validarEmail(String emailDigitado) {}
+    public boolean validarEmail(String emailDigitado) {
+        return this.email.equals(emailDigitado);
+    }
 
-    // public boolean validarSenha(String senhaDigitada) {}
+    public boolean validarSenha(String senhaDigitada) {
+        return this.password.equals(gerarHash(senhaDigitada));
+    }
 
     // public void logout() {}
 }
