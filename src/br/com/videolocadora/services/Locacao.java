@@ -1,6 +1,7 @@
 package br.com.videolocadora.services;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import br.com.videolocadora.models.Cliente;
 import br.com.videolocadora.models.Filme;
@@ -10,17 +11,20 @@ public class Locacao {
     private final int id;
     private Cliente cliente;
     private Filme filme;
-    private Date dataAlocacao;
-    private Date dataDevolucao;
+    private LocalDateTime dataAlocacao;
+    private LocalDateTime dataDevolucao;
 
-    public Locacao(Cliente cliente, Filme filme, Date dataAlocacao) throws Exception{
+    public Locacao(Cliente cliente, Filme filme) throws Exception{
         if(!verificarDisponibilidade()){
             throw new Exception("Filme Indisponivel");
-        }   
+        }
+        if(!verificarUsuarioLogado()){
+            throw new Exception("Usuario não esta logado");
+        }
         this.id = contadorId++;
         this.cliente = cliente;
         this.filme = filme;
-        this.dataAlocacao = dataAlocacao;
+        this.dataAlocacao = LocalDateTime.now();
         this.dataDevolucao = null;
         registrarLocacao();        
     }
@@ -45,24 +49,20 @@ public class Locacao {
         this.filme = filme;
     }
 
-    public Date getDataAlocacao() {
+    public LocalDateTime getDataAlocacao() {
         return dataAlocacao;
     }
 
-    public void setDataAlocacao(Date dataAlocacao) {
-        this.dataAlocacao = dataAlocacao;
-    }
-
-    public Date getDataDevolucao() {
+    public LocalDateTime getDataDevolucao() {
         return dataDevolucao;
-    }
-
-    public void setDataDevolucao(Date dataDevolucao) {
-        this.dataDevolucao = dataDevolucao;
     }
 
     public boolean verificarDisponibilidade(){
         return filme.getDisponibilidade();
+    }
+
+    public boolean verificarUsuarioLogado(){
+        return cliente.isLogado();
     }
 
     private void registrarLocacao() {
@@ -70,9 +70,30 @@ public class Locacao {
         filme.alterarDisponibilidade();
     }
 
-    public void registrarDevolucao(Date dataDevolucao) {
-        this.dataDevolucao = dataDevolucao;
+    public void registrarDevolucao() throws Exception{
+        if(!cliente.isLogado()){
+            throw new SecurityException("Cliente precisa estar logado");
+        }
+        if(getDataDevolucao() != null){
+            throw new IllegalStateException("Filme ja esta devolvido");
+        }
+        this.dataDevolucao = LocalDateTime.now();
         filme.alterarDisponibilidade();
     }
-    
+
+    public int calcularMulta(){
+        long dias = calcularTempoUtilizado(dataDevolucao);
+        int pagamentoBase = 20;
+        if(dias <= 7){
+            return pagamentoBase;
+        }else{
+            int diasExtras = (int) dias - 7;
+            return pagamentoBase + diasExtras;
+        }
+    }
+
+    public long calcularTempoUtilizado(LocalDateTime dataDevolucao){
+        return Math.max(0, ChronoUnit.DAYS.between(dataAlocacao, dataDevolucao));
+    }
+
 }

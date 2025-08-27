@@ -12,7 +12,7 @@ public abstract class Usuario {
     private String telefone;
     private String email;
     private String password;
-    //private boolean logado;
+    private boolean logado;
 
     public Usuario(String cpf, String nome, Permissao permissao, String telefone, String email, String password) {     
         this.id = contadorId++;
@@ -22,6 +22,7 @@ public abstract class Usuario {
         this.telefone = telefone;
         this.email = email;
         this.password = gerarHash(password);
+        this.logado = false;
     }  
 
     public String getEmail() {
@@ -64,6 +65,14 @@ public abstract class Usuario {
         this.telefone = telefone;
     }
 
+    public boolean isLogado() {
+        return logado;
+    }
+
+    public void setLogado(boolean logado) {
+        this.logado = logado;
+    }
+
     private String gerarHash(String senha) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -78,7 +87,11 @@ public abstract class Usuario {
         }
     }
 
-    // public boolean login(String emailDigitado, String senhaDigitada) {}
+    public void login(String emailDigitado, String senhaDigitada) throws Exception{
+        if(validarEmail(emailDigitado) && validarSenha(senhaDigitada)){
+            setLogado(true);
+        }else { throw new Exception("Email ou Senha Incorreto!"); }
+    }
 
     public boolean validarEmail(String emailDigitado) {
         return this.email.equals(emailDigitado);
@@ -88,5 +101,7 @@ public abstract class Usuario {
         return this.password.equals(gerarHash(senhaDigitada));
     }
 
-    // public void logout() {}
+    public void logout() {
+        setLogado(false);
+    }
 }
