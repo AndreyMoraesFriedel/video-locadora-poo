@@ -1,10 +1,10 @@
-package br.com.videolocadora.services;
+package main.java.br.com.videolocadora.services;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import br.com.videolocadora.models.Cliente;
-import br.com.videolocadora.models.Filme;
+import main.java.br.com.videolocadora.models.Cliente;
+import main.java.br.com.videolocadora.models.Filme;
 
 public class Locacao {
     private static int contadorId;

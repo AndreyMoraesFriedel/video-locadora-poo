@@ -1,9 +1,9 @@
-package br.com.videolocadora.services;
+package main.java.br.com.videolocadora.services;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.videolocadora.models.Filme;
+import main.java.br.com.videolocadora.models.Filme;
 
 public class Catalogo {
     private static int contadorId;

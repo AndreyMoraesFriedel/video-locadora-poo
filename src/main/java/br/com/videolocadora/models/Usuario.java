@@ -1,4 +1,4 @@
-package br.com.videolocadora.models;
+package main.java.br.com.videolocadora.models;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,13 +14,13 @@ public abstract class Usuario {
     private String password;
     private boolean logado;
 
-    public Usuario(String cpf, String nome, Permissao permissao, String telefone, String email, String password) {     
+    public Usuario(String cpf, String nome, Permissao permissao, String telefone, String email, String password) throws Exception {     
         this.id = contadorId++;
-        this.cpf = cpf;
+        this.cpf = formatarCpf(cpf);
         this.nome = nome;
         this.permissao = permissao;
-        this.telefone = telefone;
-        this.email = email;
+        this.telefone = formatarTelefone(telefone);
+        this.email = formatarEmail(email);
         this.password = gerarHash(password);
         this.logado = false;
     }  
@@ -90,15 +90,33 @@ public abstract class Usuario {
     public void login(String emailDigitado, String senhaDigitada) throws Exception{
         if(validarEmail(emailDigitado) && validarSenha(senhaDigitada)){
             setLogado(true);
-        }else { throw new Exception("Email ou Senha Incorreto!"); }
+        }else { throw new SecurityException("Email ou Senha Incorreto!"); }
     }
 
-    public boolean validarEmail(String emailDigitado) {
+    private boolean validarEmail(String emailDigitado) {
         return this.email.equals(emailDigitado);
     }
 
-    public boolean validarSenha(String senhaDigitada) {
+    private boolean validarSenha(String senhaDigitada) {
         return this.password.equals(gerarHash(senhaDigitada));
+    }
+
+    private String formatarEmail(String emailDigitado) throws Exception{
+        if(!emailDigitado.matches("^[A-Za-z0-9+_.-]+@(.+)$")){
+            throw new IllegalArgumentException("Email Invalido");
+        }else{ return emailDigitado; }
+    }
+
+    private String formatarCpf(String cpfDigitado) throws Exception{
+        if(!cpfDigitado.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")){
+            throw new IllegalArgumentException("CPF inválido. Use o formato XXX.XXX.XXX-XX");
+        }else{ return cpfDigitado; }
+    }
+
+    private String formatarTelefone(String telefoneDigitado) throws Exception{
+        if(!telefoneDigitado.matches("\\d{2}-\\d{5}-\\d{4}")){
+            throw new IllegalArgumentException("Telefone inválido. Use o formato DD-XXXXX-XXXX");
+        }else{ return telefoneDigitado; }
     }
 
     public void logout() {

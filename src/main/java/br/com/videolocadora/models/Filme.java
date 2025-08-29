@@ -1,4 +1,4 @@
-package br.com.videolocadora.models;
+package main.java.br.com.videolocadora.models;
 
 import java.util.Date;
 
@@ -70,5 +70,22 @@ public class Filme {
         }else { setDisponibilidade(true); }
     }
 
+    @Override
+    public String toString() {
+        return String.format(
+            """
+            Filme: %s
+            Gênero: %s
+            Data de Lançamento: %s
+            Produtora: %s
+            Disponível: %s
+            """,
+            titulo,
+            genero,
+            (dataLancamento != null ? dataLancamento.toString() : "Não informado"),
+            (produtora != null ? produtora.getNome() : "Não informada"),
+            (disponibilidade != null && disponibilidade ? "Sim" : "Não")
+        );
+    }
     
 }

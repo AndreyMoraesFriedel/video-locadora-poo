@@ -1,4 +1,4 @@
-package br.com.videolocadora.models;
+package main.java.br.com.videolocadora.models;
 
 public enum Genero {
     ACAO,

@@ -1,4 +1,4 @@
-package br.com.videolocadora.models;
+package main.java.br.com.videolocadora.models;
 
 public class Produtora {
     private static int contadorId;
@@ -7,11 +7,11 @@ public class Produtora {
     private String endereco;
     private String telefone;
 
-    public Produtora(String nome, String endereco, String telefone) {
+    public Produtora(String nome, String endereco, String telefone) throws Exception {
         this.id = contadorId++;
         this.nome = nome;
         this.endereco = endereco;
-        this.telefone = telefone;
+        this.telefone = formatarTelefone(telefone);
     }
 
     public int getId() {
@@ -40,6 +40,12 @@ public class Produtora {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    private String formatarTelefone(String telefoneDigitado) throws Exception{
+        if(!telefoneDigitado.matches("\\d{2}-\\d{5}-\\d{4}")){
+            throw new IllegalArgumentException("Telefone inválido. Use o formato DD-XXXXX-XXXX");
+        }else{ return telefoneDigitado; }
     }
     
 }
