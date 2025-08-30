@@ -10,6 +10,7 @@ import main.java.br.com.videolocadora.models.Filme;
 import main.java.br.com.videolocadora.models.Genero;
 import main.java.br.com.videolocadora.models.Produtora;
 import main.java.br.com.videolocadora.services.Catalogo;
+import main.java.br.com.videolocadora.services.Locacao;
 
 public class App {
     public static void main(String[] args) throws Exception{
@@ -50,23 +51,59 @@ public class App {
                 dataLancamento, 
                 produtora
             );
-            System.out.println("Filme cadastrado com sucesso");
+
+            Filme filme2 = new Filme(
+                "O sol nascer", 
+                Genero.ROMANCE, 
+                dataLancamento, 
+                produtora
+            );
+
+            Filme filme3 = new Filme(
+                "As pedras que caminham", 
+                Genero.DOCUMENTARIO, 
+                dataLancamento, 
+                produtora
+            );
+
+            System.out.println("Filmes cadastrados com sucesso");
 
             Catalogo catalogo = new Catalogo();
             System.out.println("Catalogo construido com sucesso");
 
             catalogo.cadastrarFilme(filme);
-            System.out.println("Filme adicionado ao catalogo");
+            catalogo.cadastrarFilme(filme2);
+            catalogo.cadastrarFilme(filme3);
+            System.out.println("Filmes adicionados ao catalogo");
 
+            catalogo.removerFilme(2);
+            System.out.println("Filme de id 2 removido!");
+
+            System.out.println("Filmes do Catalogo");
             List<Filme> filmesDoCat = catalogo.consultarFilmes();
-            for (Filme filme2 : filmesDoCat) {
-                System.out.println(filme2);
+            for (Filme fil : filmesDoCat) {
+                System.out.println(fil);
             }
 
+            cliente.login("robson@gmail.com", "1234");
+            Locacao loc = new Locacao(cliente, filme);
+            Locacao loc2 = new Locacao(cliente, filme2);
+            System.out.println("Locacoes Construidas");
+
+            loc.registrarDevolucao();
+
+            List<Locacao> locDoCliente = cliente.minhasLocacoes();
+            System.out.println("Locacoes do Cliente: ");
+            for (Locacao locacao : locDoCliente) {
+                System.out.println(locacao);
+            }
+
+            cliente.logout();
+
         }catch(IllegalArgumentException e){
-            System.out.println("Erro De Formatacao" + e.getMessage());
+            System.out.println("Erro De Formatacao: " + e.getMessage());
         }catch(SecurityException e){
-            System.out.println("Erro de seguranca" + e.getMessage());
+            System.out.println("Erro de seguranca: " + e.getMessage());
         }catch(Exception e){
             System.out.println("Erro inesperado: " + e.getMessage());
         }

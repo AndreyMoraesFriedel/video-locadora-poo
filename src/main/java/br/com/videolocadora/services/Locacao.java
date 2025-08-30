@@ -15,11 +15,11 @@ public class Locacao {
     private LocalDateTime dataDevolucao;
 
     public Locacao(Cliente cliente, Filme filme) throws Exception{
-        if(!verificarDisponibilidade()){
+        if(!verificarDisponibilidade(filme)){
             throw new Exception("Filme Indisponivel");
         }
-        if(!verificarUsuarioLogado()){
-            throw new Exception("Usuario não esta logado");
+        if(!verificarClienteLogado(cliente)){
+            throw new Exception("Cliente não esta logado");
         }
         this.id = contadorId++;
         this.cliente = cliente;
@@ -57,11 +57,11 @@ public class Locacao {
         return dataDevolucao;
     }
 
-    public boolean verificarDisponibilidade(){
+    public boolean verificarDisponibilidade(Filme filme){
         return filme.getDisponibilidade();
     }
 
-    public boolean verificarUsuarioLogado(){
+    public boolean verificarClienteLogado(Cliente cliente){
         return cliente.isLogado();
     }
 
@@ -96,4 +96,20 @@ public class Locacao {
         return Math.max(0, ChronoUnit.DAYS.between(dataAlocacao, dataDevolucao));
     }
 
+    @Override
+    public String toString() {
+        return String.format("""
+                id: %d
+                Nome Do Cliente: %s
+                Titulo Do Filme: %s
+                Data da Alocacao: %s
+                Data da Devolucao: %s
+                """,
+                getId(),
+                getCliente().getNome(),
+                getFilme().getTitulo(),
+                getDataAlocacao().toString(),
+                (getDataDevolucao() != null  ? getDataDevolucao().toString():"Filme nao devolvido")
+        );
+    }
 }
